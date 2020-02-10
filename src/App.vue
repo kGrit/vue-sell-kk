@@ -1,32 +1,54 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+<div class="app">
+  <v-header :sellers="seller"></v-header>
+  <tab></tab>
+  <v-content>
+  </v-content>
+</div>
 </template>
 
-<style lang="less">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import header from '@/components/header/Header'
+import tab from '@/components/Tab'
+import content from '@/components/Content'
+export default {
+  components: {
+    'v-header': header,
+    tab,
+    'v-content': content
+  },
+  data () {
+    return {
+      seller: {}
+    }
+  },
+  async created () {
+    // this.$axios.get('http://localhost:3000/seller').then(({ data }) => {
+    //   if (data.error === 0) {
+    //     this.seller = data.data
+    //     console.log(this.seller)
+    //   }
+    // }).catch((e) => {
+    //   console.log(e)
+    // })
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+    try {
+      const { data, statusText, status } = await this.$axios.get('seller')
+      // console.log(res)
+      if (status === 200) {
+        this.seller = data.data
+        console.log(this.seller)
+      } else {
+        console.log(statusText)
+      }
+    } catch (e) {
+      console.log(e)
     }
   }
+
 }
+</script>
+
+<style>
+
 </style>
