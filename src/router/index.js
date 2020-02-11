@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Comment from 'com/Comment.vue'
-import Goods from 'com/Goods.vue'
+import Goods from 'com/goods/Goods.vue'
 import Merchant from 'com/Merchant.vue'
 
 Vue.use(VueRouter)

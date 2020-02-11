@@ -25,3 +25,10 @@
     background-image: url("../components/star/@{url}@3x.png");
   }
 }
+.bg-image2(@url) {
+  // 正常情况下用2x图片 (这里是基于star组件的地址)  @{url}
+    background-image: url( "../components/icon/@{url}@2x.png" );
+  @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio:3) {
+    background-image: url("../components/icon/@{url}@3x.png");
+  }
+}

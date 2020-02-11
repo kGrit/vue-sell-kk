@@ -37,7 +37,7 @@ export default {
       // console.log(res)
       if (status === 200) {
         this.seller = data.data
-        console.log(this.seller)
+        // console.log(this.seller)
       } else {
         console.log(statusText)
       }

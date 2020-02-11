@@ -24,7 +24,6 @@
             <span class="bulletin-title"></span>
             <span class="bulletin-text">{{sellers.bulletin}}</span>
             <i class="icon-keyboard_arrow_right"></i>
-
         </div>
         <div class="background">
             <img :src="sellers.avatar" alt="" width="100%" height="100%">
@@ -47,7 +46,8 @@
                     </div>
                     <div class="supports" v-if="sellers.supports">
                         <div class="support-item" v-for="(item,index) in sellers.supports" :key ="index" >
-                            <div class="icon" :class="icon[index]"></div>
+                            <!-- <div class="icon" :class="icon[index]"></div> -->
+                            <icon v-if="sellers" :class="[icon[index],iconClassMap[1]]" @fn="getData"></icon>
                             <span class="icon-text">{{item.description}}</span>
                         </div>
                     </div>
@@ -71,13 +71,18 @@
 <script>
 // 引入星星组件
 import star from 'com/star/star'
+// 引入icon组件
+import icon from 'com/icon/icon'
 export default {
   created () {
-    this.icon = ['decrease', 'descount', 'guarantee', 'invoice', 'special']
+    // this.icon = ['decrease', 'descount', 'guarantee', 'invoice', 'special']
+    // this.iconClassMap = ['icon1', 'icon2', 'icon3', 'icon4']
   },
   data () {
     return {
     //   icon: ['decrease', 'descount', 'guarantee', 'invoice', 'special'],
+      icon: [],
+      iconClassMap: [],
       showDetail: false
     }
   },
@@ -87,6 +92,12 @@ export default {
     },
     close () {
       this.showDetail = false
+    },
+    getData (icon, iconClassMap) {
+      console.log(icon, iconClassMap)
+      this.icon = icon
+      this.iconClassMap = iconClassMap
+    //   console.log('父组件中提供的方法')
     }
   },
   props: {
@@ -96,14 +107,16 @@ export default {
   },
   components: {
     // 注册star组件
-    star
+    star,
+    icon
   }
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import '../../styles/mixin.less';
 .header {
+
     position:relative;
     background-color: rgba(7,17,27,0.5);
     overflow: hidden;
@@ -312,32 +325,33 @@ export default {
                         width: 100%;
                         margin-bottom: 12px;
                         &:last-child {
-                            margin-bottom: 0;
+                            margin-bottom:  0;
                         }
-                        .icon {
-                            display: inline-block;
-                            margin-right: 6px;
-                            vertical-align: top;
-                            width: 16px;
-                            height: 16px;
-                            background-repeat: no-repeat;
-                            background-size: contain;
-                            &.decrease {
-                                .bg-image('decrease_1')
-                            }
-                            &.descount {
-                                .bg-image('discount_1')
-                            }
-                            &.guarantee {
-                                .bg-image('guarantee_1')
-                            }
-                            &.invoice {
-                                .bg-image('invoice_1')
-                            }
-                            &.special {
-                                .bg-image('special_1')
-                            }
-                        }
+
+                        // .icon {
+                        //     display: inline-block;
+                        //     margin-right: 6px;
+                        //     vertical-align: top;
+                        //     width: 16px;
+                        //     height: 16px;
+                        //     background-repeat: no-repeat;
+                        //     background-size: contain;
+                        //     &.decrease {
+                        //         .bg-image('decrease_1')
+                        //     }
+                        //     &.descount {
+                        //         .bg-image('discount_1')
+                        //     }
+                        //     &.guarantee {
+                        //         .bg-image('guarantee_1')
+                        //     }
+                        //     &.invoice {
+                        //         .bg-image('invoice_1')
+                        //     }
+                        //     &.special {
+                        //         .bg-image('special_1')
+                        //     }
+                        // }
                         .icon-text {
                             font-size: 12px;
                             line-height: 12px;
