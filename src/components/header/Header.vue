@@ -122,6 +122,7 @@ export default {
     overflow: hidden;
     .content-wrapper {
         position: relative;
+        display: flex;
         img {
         padding: 24px 16px 16px 24px;
         border-radius: 2px;
@@ -131,6 +132,7 @@ export default {
             display: inline-block;
             vertical-align: top;
             padding-top: 24px;
+            flex: 1;
             .title {
                 margin-top: 2px;
                 .brand {
