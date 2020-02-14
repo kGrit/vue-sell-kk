@@ -21,7 +21,7 @@
               <ul>
                 <li v-for="(item,index) in goods.foods" :key="index" class="food-item border-1px">
                   <div>
-                <img :src="item.icon" alt="" width="100px" class="food-icon">
+                <img :src="item.icon" alt="" width="57px" class="food-icon">
               </div>
               <div class="conent">
                   <h1 class="name">{{item.name}}</h1>
@@ -34,13 +34,14 @@
                     <span class="price">¥{{item.price}} </span>
                     <span v-show="item.oldPrice!==''" class="old-price">¥{{item.oldPrice}}</span>
                   </div>
+                  <foodcontrol :food= "item"></foodcontrol>
                 </div>
                 </li>
               </ul>
           </li>
       </ul>
     </div>
-    <shopcar></shopcar>
+    <shopcar :min-price="this.sellers.minPrice" :delivery-price="this.sellers.deliveryPrice" :shopCount = "selectFood"></shopcar>
   </div>
 </template>
 
@@ -48,6 +49,7 @@
 import icon from '../icon/icon.vue'
 import BScroll from '@better-scroll/core'
 import shopcar from 'com/shopcar/shopcar.vue'
+import foodcontrol from 'com/foodcontrol/foodcontrol.vue'
 export default {
   data () {
     return {
@@ -84,9 +86,8 @@ export default {
   computed: {
     currentIndex () {
       // 遍历lineHeight的高度
-      console.log(this.listHeight)
+      // console.log(this.listHeight)
       for (let i = 0; i < this.listHeight.length; i++) {
-        console.log(1)
         // 获取前一个的高度
         let height1 = this.listHeight[i]
         // 获取后一个的高度
@@ -99,6 +100,22 @@ export default {
         }
       }
       return 0
+    },
+    selectFood () {
+      // 获取food
+      let food = []
+      this.goods.forEach((good) => {
+        // console.log(item)
+        good.foods.forEach((item) => {
+          // console.log(item)
+          if (item.count) {
+            // 拿到了所有有count的项
+            food.push(item)
+          }
+        })
+      })
+      // console.log(food)
+      return food
     }
   },
   methods: {
@@ -108,7 +125,8 @@ export default {
       })
       this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
         // 获取实时位置(better-scroller内置)
-        probeType: 3
+        probeType: 3,
+        click: true
       })
       // better-scroller的on方法
       this.foodsScroll.on('scroll', (pos) => {
@@ -156,7 +174,8 @@ export default {
   },
   components: {
     icon,
-    shopcar
+    shopcar,
+    foodcontrol
   }
 }
 
@@ -213,7 +232,6 @@ export default {
 
     .foods-wrapper {
       flex: 1;
-      min-width: 340px;
       .title {
         height: 26px;
         line-height: 26px;
@@ -238,6 +256,7 @@ export default {
         }
         .conent {
           flex: 1;
+          position: relative;
           margin-left: 10px;
           .name {
               font-size: 14px;
@@ -265,6 +284,11 @@ export default {
              color: rgb(147,153,159);
              font-weight: 700;
              text-decoration: line-through;
+          }
+          .foodcontrol {
+            position: absolute;
+            right: 0;
+            bottom: -6px;
           }
         }
 

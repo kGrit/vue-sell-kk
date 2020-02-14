@@ -94,7 +94,7 @@ export default {
       this.showDetail = false
     },
     getData (icon, iconClassMap) {
-      console.log(icon, iconClassMap)
+    //   console.log(icon, iconClassMap)
       this.icon = icon
       this.iconClassMap = iconClassMap
     //   console.log('父组件中提供的方法')

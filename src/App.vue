@@ -2,7 +2,7 @@
 <div class="app">
   <v-header :sellers="seller"></v-header>
   <tab></tab>
-  <v-content>
+  <v-content :sellers="this.seller">
   </v-content>
 </div>
 </template>
