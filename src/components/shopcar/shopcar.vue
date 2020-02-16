@@ -20,7 +20,8 @@
             <span class="empty" @click="empty">清空</span>
           </div>
           <div class="list-content" ref="listConent">
-            <ul>
+            <!-- 这里要注意  任何时候如果出现无法滚动的情况，都应该首先查看 content 元素高度/宽度是否大于 wrapper 的高度/宽度。这是内容能够滚动的前提条件。-->
+            <ul >
               <li class="food border-1px" v-for="(food,index) in shopCount" :key="index">
                 <span class="name">{{food.name}}</span>
                 <div class="price">
@@ -44,6 +45,13 @@
 import foodcontrol from 'com/foodcontrol/foodcontrol.vue'
 import BScroll from '@better-scroll/core'
 export default {
+  // created () {
+  //   this.$nextTick(() => {
+  //     this.scroll = new BScroll(this.$refs.listConent, {
+  //       click: true
+  //     })
+  //   })
+  // },
   data () {
     return {
       flod: true,
@@ -173,6 +181,7 @@ export default {
         // console.log(this.showList, this.flod)
         if (this.showList) {
           if (!this.scroll) {
+            console.log('ee')
             this.$nextTick(() => {
               this.scroll = new BScroll(this.$refs.listConent, {
                 click: true
@@ -182,6 +191,18 @@ export default {
             this.scroll.refresh()
           }
         }
+      }
+    },
+    // 监听showlist的出来的时候 让scroll重新算,如果没有这一步 会出现,第一次弹出listshow有效果,之后没有的问题
+    showList () {
+      console.log('监听了')
+      if (this.showList) {
+        console.log('ee')
+        this.$nextTick(() => {
+          this.scroll = new BScroll(this.$refs.listConent, {
+            click: true
+          })
+        })
       }
     }
   },
