@@ -1,8 +1,6 @@
 <template>
   <div class="shopcar">
       <div class="content" @click = "toggleList">
-      <!-- <div class="content" > -->
-
         <div class="content-left">
           <div class="icon-wrapper">
             <div class="icon" :class="{'highlight': foodsCount>0}">
@@ -13,32 +11,38 @@
           <div class="price" :class="{'highlight': priceCount>0}">¥{{priceCount}}</div>
           <div class="desc">另需配送费¥{{deliveryPrice}}元</div>
         </div>
-        <div class="content-right" :class="payClass">{{payDesc}}</div>
+        <div class="content-right" :class="payClass" @click.stop.prevent ="pay">{{payDesc}}</div>
       </div>
-      <div class="shopcar-list" v-show="showList">
-      <!-- <div class="shopcar-list" > -->
-        <div class="list-header">
-          <h1 class="title">购物车</h1>
-          <span class="empty">清空</span>
+      <transition name="flod">
+        <div class="shopcar-list" v-show="showList">
+          <div class="list-header">
+            <h1 class="title">购物车</h1>
+            <span class="empty" @click="empty">清空</span>
+          </div>
+          <div class="list-content" ref="listConent">
+            <ul>
+              <li class="food border-1px" v-for="(food,index) in shopCount" :key="index">
+                <span class="name">{{food.name}}</span>
+                <div class="price">
+                  <span>¥{{food.price*food.count}}</span>
+                  <div class="control-wrapper">
+                  <foodcontrol :food = "food"></foodcontrol>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="list-content">
-          <ul>
-            <li class="food" v-for="(food,index) in shopCount" :key="index">
-              <span class="name">{{food.name}}</span>
-              <div class="price">
-                <span>¥{{food.price*food.count}}</span>
-                <foodcontrol></foodcontrol>
-              </div>
-
-            </li>
-          </ul>
-        </div>
-      </div>
+      </transition>
+      <transition name="mask">
+        <div class="list-mask" v-show="!flod" @click="flodList"> </div>
+      </transition>
   </div>
 </template>
 
 <script>
 import foodcontrol from 'com/foodcontrol/foodcontrol.vue'
+import BScroll from '@better-scroll/core'
 export default {
   data () {
     return {
@@ -79,6 +83,18 @@ export default {
         return
       }
       this.flod = !this.flod
+    },
+    empty () {
+      // 清空按钮就是将food中每一项里面的count清零
+      this.shopCount.forEach(food => {
+        food.count = 0
+      })
+    },
+    flodList () {
+      this.flod = true
+    },
+    pay () {
+      alert(`你需要支付${this.priceCount}元和${this.deliveryPrice}元`)
     }
   },
   computed: {
@@ -128,14 +144,24 @@ export default {
         this.showList = false
         // console.log(this.showList)
       } else {
-        this.showList = this.flod
+        this.showList = !this.flod
+        // 滚动效果
+        if (this.showList) {
+          if (!this.scroll) {
+            this.$nextTick(() => {
+              this.scroll = new BScroll(this.$refs.listConent, {
+                click: true
+              })
+            })
+          } else {
+            this.scroll.refresh()
+          }
+        }
       }
-
-      console.log(this.showList, this.flod)
+      // console.log(this.showList, this.flod)
     },
     // 由于监听没有缓存机制,不能自动判断到点击content的时候flod变化,不能自动触发上面的priceCount监听,所以这里还要监听flod变化,做上面相同操作
     flod (newValue, oldvaue) {
-      console.log(1)
       if (!this.priceCount) {
         console.log(this.priceCount)
         // console.log(1)
@@ -143,7 +169,19 @@ export default {
         this.showList = false
         // console.log(this.showList)
       } else {
-        this.showList = this.flod
+        this.showList = !this.flod
+        // console.log(this.showList, this.flod)
+        if (this.showList) {
+          if (!this.scroll) {
+            this.$nextTick(() => {
+              this.scroll = new BScroll(this.$refs.listConent, {
+                click: true
+              })
+            })
+          } else {
+            this.scroll.refresh()
+          }
+        }
       }
     }
   },
@@ -154,19 +192,21 @@ export default {
 }
 </script>
 
-<style lang='less'>
+<style lang='less' scoped>
+@import '../../styles/mixin.less';
   .shopcar {
     position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
-    z-index: 20;
+    z-index: 40;
     height: 48px;
     .content {
       display: flex;
       background-color: #141d27;
       height: 100%;
       font-size: 0;
+      z-index: 30;
       .content-left {
         flex: 1;
         .icon-wrapper {
@@ -257,6 +297,92 @@ export default {
         }
       }
     }
-  }
+    .shopcar-list {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      // 把自己隐藏在car下面
+      z-index: -5;
+      transform: translate3d(0,-100%,0);
+      transition: all 0.4s linear;
+      &.flod-enter, &.flod-leave-to {
+        transform: translate3d(0,0,0)
+      }
+      .list-header {
+        height: 40px;
+        line-height: 40px;
+        padding:0 18px;
+        background-color: #f3f5f7;
+        border: 2px solid rgba(7,17,27,0.1);
+        .title {
+          float: left;
+          font-size: 14px;
+          font-weight: 200;
+          color: rgb(7,17,27);
+        }
+        .empty {
+          float: right;
+          font-size: 12px;
+          color: rgb(0,160,220);
+        }
+      }
+      .list-content {
+        padding: 0 18px;
+        max-height: 217px;
+        overflow: hidden;
+        background-color: #fff;
+        .food {
+          // display: flex;
+          height: 48px;
+          line-height: 48px;
+          background-color: #fff;
+          .border-1px(rgba(7,17,27,0.1));
+          .name {
+            // flex: 1;
+            float: left;
+            font-size: 13px;
+            color: rgb(7,17,27)
+          }
+          .price {
+            float: right;
+            font-size: 14px;
+            font-weight: 700;
+            color: rgb(240,20,20)
+          }
+          .control-wrapper {
+            box-sizing: border-box;
+            float: right;
+            padding-top: 4px;
+            height: 45px;
+            .foodcontrol {
+            transform: scale(0.7);
+
+            }
+          }
+        }
+      }
+     }
+    }
+    .list-mask {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -10;
+      background-color: rgba(7,17,27,0.6);
+      transition: all 1s;
+      opacity: 1;
+      backdrop-filter: blur(10px);
+      &.mask-enter,&.mask-leave-to {
+        transition: all 1s;
+        opacity: 0;
+      }
+      // &.mask-enter-active,&.mask-leave-active {
+      //   transition: all 1s;
+      //   opacity: 0.5;
+      // }
+    }
 
 </style>

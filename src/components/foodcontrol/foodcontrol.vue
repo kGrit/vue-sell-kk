@@ -23,10 +23,7 @@ export default {
   methods: {
     addCar () {
       if (!this.food.count) {
-        // vue中动态添加属性要放在ref中
-        // this.food.count = 1
-        // console.log(34)
-        // console.log(this.food)
+        // vue中动态添加属性要放在set中
         this.$set(this.food, 'count', 1)
       } else {
         this.food.count++
@@ -46,17 +43,6 @@ export default {
 <style lang="less">
 .foodcontrol {
   font-size: 0;
-    // .fade-enter,
-    // .fade-leave-to {
-    //   transition: all 0.4s linear;
-    //   opacity: 0;
-    //   transform:  translate3D(24px,0,0);
-    // }
-    // .fade-enter-to {
-    //   transition: all 0.4s linear;
-    //   opacity: 1;
-    //   transform:  translate3D(0px,0,0);
-    // }
   .food-decrease {
     display:inline-block;
     font-size: 0;
@@ -71,9 +57,6 @@ export default {
       font-size: 24px;
       transform: rotate(0);
     }
-    // &.move-leave-to,&.move-enter-to {
-    //   transform: rotate(0);
-    // }
     // 添加平移和旋转效果 &指的是food-decrease且
     &.move-enter-active, &.move-leave-active {
         transition: all 0.4s linear;
